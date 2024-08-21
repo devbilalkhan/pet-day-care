@@ -1,6 +1,8 @@
 import Backgound from "@/components/backgound";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
+import { PetsContextProvider } from "@/context/pets-context-provider";
+import { Pet } from "@/lib/types";
 import type { Metadata } from "next";
 type LayoutProps = {
   children: React.ReactNode;
@@ -16,13 +18,22 @@ export async function generateMetaData({
   };
 }
 
-function Layout({ children }: LayoutProps) {
+async function Layout({ children }: LayoutProps) {
+  const respose = await fetch(
+    "https://bytegrad.com/course-assets/projects/petsoft/api/pets"
+  );
+
+  if (!respose.ok) {
+    throw new Error("could not fetch pets");
+  }
+  const data: Pet[] = await respose.json();
+
   return (
     <>
       <Backgound />
       <div className="flex flex-col max-w-[1200px] mx-auto px-10 min-h-screen">
         <Header />
-        {children}
+        <PetsContextProvider data={data}>{children}</PetsContextProvider>
         <Footer />
       </div>
     </>
