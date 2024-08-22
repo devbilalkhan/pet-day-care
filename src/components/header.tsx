@@ -4,12 +4,6 @@ import Logo from "./logo";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-// type HeaderProps = {
-//   params: {
-//     [string]: string | string[] | undefined;
-//   };
-// };
-
 const routes = [
   {
     label: "Dashboard",
@@ -30,7 +24,7 @@ function Header() {
     <header className="flex h-16 items-center border-b border-white/30">
       <Logo />
       <nav className="ml-auto">
-        <ul className="flex gap-x-10">
+        <ul className="flex gap-x-2">
           {routes.map((route) => (
             <li
               key={route.id}

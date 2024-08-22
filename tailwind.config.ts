@@ -23,8 +23,10 @@ const config = {
           light: "#A7F3D0",
           DEFAULT: '#2A9677',
           dark: '#10B981',
-        }
+        },
+    light: "rgba(0, 0, 0, 0.08)",
       },
+
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
