@@ -2,6 +2,8 @@
 import Image from "next/image";
 import { usePetContext } from "../hooks/hooks";
 import { Pet } from "@/lib/types";
+import { Button } from "./ui/button";
+
 type PetListProps = {};
 
 function PetDetails(props: PetListProps) {
@@ -39,7 +41,7 @@ function EmptyView() {
 
 function TopBar({ selectedPet }: { selectedPet: Pet }) {
   return (
-    <div className="flex items-center bg-white px-12 py-5 border-b border-light">
+    <div className="flex items-center gap-x-3 bg-white px-12 py-5 border-b border-light">
       <Image
         src={selectedPet?.imageUrl}
         height={75}
@@ -47,7 +49,11 @@ function TopBar({ selectedPet }: { selectedPet: Pet }) {
         alt="pet"
         className="rounded-full w-[75px] h-[75px]"
       />
-      <h2 className="text-3xl font-semibold ml-5">{selectedPet?.name}</h2>
+      <h2 className="text-3xl font-semibold ">{selectedPet?.name}</h2>
+      <Button variant="secondary" className="ml-auto">
+        Edit
+      </Button>
+      <Button variant="secondary"> Checkout</Button>
     </div>
   );
 }

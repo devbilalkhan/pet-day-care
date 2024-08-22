@@ -1,13 +1,17 @@
+import { cn } from "@/lib/utils";
 import React from "react";
 
 type H1Props = {
   children: React.ReactNode;
+  className?: string;
 };
 
-function H1({ children }: H1Props) {
+function H1({ children, className }: H1Props) {
   return (
     <>
-      <h1 className="font-medium text-2xl leading-6">{children}</h1>
+      <h1 className={cn("font-medium text-2xl leading-6", className)}>
+        {children}
+      </h1>
     </>
   );
 }

@@ -1,17 +1,31 @@
 "use client";
 
-import { usePetContext } from "@/hooks/hooks";
+import { useDebounce, usePetContext } from "@/hooks/hooks";
 import { Pet } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useSearchStore } from "@/store/store";
 import Image from "next/image";
+import { useMemo } from "react";
 
 function PetList() {
   const { pets, handleSelectedPetId, selectedId } = usePetContext();
+  const searchText = useSearchStore((state) => state.searchText);
+  const debouncedText = useDebounce(searchText);
+
+  const filteredPetList = useMemo(() => {
+    if (debouncedText) {
+      return pets.filter((pet) =>
+        pet.name.toLowerCase().includes(debouncedText.toLowerCase())
+      );
+    }
+
+    return pets;
+  }, [debouncedText, pets]);
 
   return (
     <>
       <ul className="bg-white border-b border-light">
-        {pets.map(({ id, name, imageUrl }: Pet) => (
+        {filteredPetList.map(({ id, name, imageUrl }: Pet) => (
           <li key={id}>
             <button
               onClick={() => handleSelectedPetId(id)}
@@ -34,6 +48,11 @@ function PetList() {
           </li>
         ))}
       </ul>
+      {filteredPetList.length === 0 && (
+        <div className="flex text-black/50 text-base h-full items-center justify-center">
+          <p>No pets found with the name {debouncedText}</p>
+        </div>
+      )}
     </>
   );
 }
