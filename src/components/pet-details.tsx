@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 type PetListProps = {};
 
 function PetDetails(props: PetListProps) {
-  const { selectedPet } = usePetContext();
+  const { selectedPet, handleCheckout } = usePetContext();
 
   if (!selectedPet) {
     return <EmptyView />;
@@ -15,7 +15,7 @@ function PetDetails(props: PetListProps) {
     return (
       <>
         <section className="flex flex-col h-full">
-          <TopBar selectedPet={selectedPet} />
+          <TopBar selectedPet={selectedPet} handleCheckout={handleCheckout} />
           <OtherInfo selectedPet={selectedPet} />
           <Notes selectedPet={selectedPet} />
         </section>
@@ -39,7 +39,13 @@ function EmptyView() {
   );
 }
 
-function TopBar({ selectedPet }: { selectedPet: Pet }) {
+function TopBar({
+  selectedPet,
+  handleCheckout,
+}: {
+  selectedPet: Pet;
+  handleCheckout: (id: string) => {};
+}) {
   return (
     <div className="flex items-center gap-x-3 bg-white px-12 py-5 border-b border-light">
       <Image
@@ -53,7 +59,13 @@ function TopBar({ selectedPet }: { selectedPet: Pet }) {
       <Button variant="secondary" className="ml-auto">
         Edit
       </Button>
-      <Button variant="secondary"> Checkout</Button>
+      <Button
+        onClick={() => handleCheckout(selectedPet?.id)}
+        variant="secondary"
+      >
+        {" "}
+        Checkout
+      </Button>
     </div>
   );
 }

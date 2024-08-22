@@ -1,11 +1,12 @@
 "use client";
 import { Pet } from "@/lib/types";
-import { createContext, useState } from "react";
+import { createContext, useMemo, useState } from "react";
 
 type PetsContextType = {
   pets: Pet[];
   selectedId: string | null;
   handleSelectedPetId: (id: string) => void;
+  handleCheckout: (id: string) => void;
   selectedPet: Pet | undefined;
   totalPets: number;
 };
@@ -25,8 +26,16 @@ export function PetsContextProvider({
   //derived state
   const selectedPet = pets.find((p) => p.id === selectedId);
   const totalPets = pets.length;
+
+  // select a pet based on id for an active state
   const handleSelectedPetId = (id: string) => {
     setSelectedId(id);
+  };
+
+  // remove pet from the list
+  const handleCheckout = (id: string) => {
+    setPets((prev) => prev.filter((p) => p.id !== id));
+    setSelectedId(null);
   };
 
   return (
@@ -37,6 +46,7 @@ export function PetsContextProvider({
         handleSelectedPetId,
         selectedPet,
         totalPets,
+        handleCheckout,
       }}
     >
       {children}
