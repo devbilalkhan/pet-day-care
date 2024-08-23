@@ -1,10 +1,10 @@
 import Backgound from "@/components/backgound";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
+import { Toaster } from "@/components/ui/sonner";
 import { PetsContextProvider } from "@/context/pets-context-provider";
 import prisma from "@/lib/db";
-import { Pet } from "@/lib/types";
-import type { Metadata } from "next";
+
 type LayoutProps = {
   children: React.ReactNode;
 };
@@ -20,7 +20,7 @@ export async function generateMetaData({
 }
 
 async function Layout({ children }: LayoutProps) {
-  const pets = await prisma.pet.findMany()
+  const pets = await prisma.pet.findMany();
   return (
     <>
       <Backgound />
@@ -29,6 +29,7 @@ async function Layout({ children }: LayoutProps) {
         <PetsContextProvider data={pets}>{children}</PetsContextProvider>
         <Footer />
       </div>
+      <Toaster position="top-right" />
     </>
   );
 }

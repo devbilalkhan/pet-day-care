@@ -6,10 +6,14 @@ import { Textarea } from "./ui/textarea";
 import { usePetContext } from "../hooks/hooks";
 import { Button } from "./ui/button";
 import { createPet } from "@/actions/actions";
-
-type PetFormProps = {
-  handleDialogClose: (value: boolean) => void;
+import { sleep } from "@/lib/utils";
+import { useFormState, useFormStatus } from "react-dom";
+import { toast } from "sonner";
+type ActionType = {
   action: "edit" | "new";
+};
+type PetFormProps = ActionType & {
+  handleDialogClose: (value: boolean) => void;
 };
 
 function PetForm({ handleDialogClose, action }: PetFormProps) {
@@ -18,7 +22,10 @@ function PetForm({ handleDialogClose, action }: PetFormProps) {
   return (
     <form
       action={async (formData) => {
-        await createPet(formData);
+        const response = await createPet(formData);
+        response.success
+          ? toast.success(response.success)
+          : toast.error(response.error);
         handleDialogClose(false);
       }}
     >
@@ -70,11 +77,18 @@ function PetForm({ handleDialogClose, action }: PetFormProps) {
           defaultValue={action === "edit" ? pet?.note : ""}
         />
       </div>
-      <Button type="submit" className="mt-6 py-5 ">
-        {action === "new" ? "Add" : "Edit"} Pet
-      </Button>
+      <PetFormButton action={action} />
     </form>
   );
 }
 
 export default PetForm;
+
+function PetFormButton({ action }: ActionType) {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" disabled={pending} className="mt-6 py-5 ">
+      {pending ? "Loading..." : action === "new" ? "Add Pet" : "Edit Pet"}
+    </Button>
+  );
+}

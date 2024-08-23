@@ -9,6 +9,7 @@ import { AddPetButton } from "@/components/add-pet-button";
 function Page() {
   return (
     <main>
+
       <div className="flex items-center justify-between text-white py-8">
         <Branding />
         <Stats />
@@ -31,6 +32,7 @@ function Page() {
           </ContentBlock>
         </div>
       </div>
+      
     </main>
   );
 }
