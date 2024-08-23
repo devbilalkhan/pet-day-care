@@ -6,6 +6,18 @@ import Stats from "@/components/Stats";
 import ContentBlock from "../../../../components/content-block";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "@radix-ui/react-icons";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogFooter,
+  DialogHeader,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import NewPetForm from "@/components/new-pet-form";
 
 function Page() {
   return (
@@ -21,9 +33,9 @@ function Page() {
         <div className="relative md:col-start-1 md:row-start-2 md:row-span-full  md:col-span-1">
           <ContentBlock>
             <PetList />
-            <Button size="icon" className="absolute bottom-5 right-5">
-              <PlusIcon className="h-6 w-6" />
-            </Button>
+            <div className="absolute bottom-4 right-4">
+              <AddPetButton />
+            </div>
           </ContentBlock>
         </div>
         <div className="md:col-start-2 md:col-span-full md:row-span-full md:row-start-1">
@@ -37,3 +49,26 @@ function Page() {
 }
 
 export default Page;
+
+export function AddPetButton() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button size="icon">
+          <PlusIcon className="h-6 w-6" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Add a new pet</DialogTitle>
+          <DialogDescription></DialogDescription>
+        </DialogHeader>
+        <NewPetForm />
+        <DialogFooter>
+          <Button type="submit">Save changes</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+

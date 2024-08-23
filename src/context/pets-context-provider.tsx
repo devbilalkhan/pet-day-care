@@ -27,6 +27,11 @@ export function PetsContextProvider({
   const selectedPet = pets.find((p) => p.id === selectedId);
   const totalPets = pets.length;
 
+  //event handlers /actions
+  // add a new pet
+  const handleAddPet = (newPet: Pet) => {
+    setPets((prev) => [...prev, newPet]);
+  };
   // select a pet based on id for an active state
   const handleSelectedPetId = (id: string) => {
     setSelectedId(id);

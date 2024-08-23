@@ -3,6 +3,15 @@ import Image from "next/image";
 import { usePetContext } from "../hooks/hooks";
 import { Pet } from "@/lib/types";
 import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogFooter,
+  DialogHeader,
+} from "@/components/ui/dialog";
 
 type PetListProps = {};
 
@@ -44,7 +53,7 @@ function TopBar({
   handleCheckout,
 }: {
   selectedPet: Pet;
-  handleCheckout: (id: string) => {};
+  handleCheckout: (id: string) => void;
 }) {
   return (
     <div className="flex items-center gap-x-3 bg-white px-12 py-5 border-b border-light">
@@ -56,9 +65,23 @@ function TopBar({
         className="rounded-full w-[75px] h-[75px]"
       />
       <h2 className="text-3xl font-semibold ">{selectedPet?.name}</h2>
-      <Button variant="secondary" className="ml-auto">
-        Edit
-      </Button>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="secondary" className="ml-auto">
+            Edit
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit pet</DialogTitle>
+            <DialogDescription></DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter>
+            <Button type="submit">Save changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <Button
         onClick={() => handleCheckout(selectedPet?.id)}
         variant="secondary"
@@ -68,6 +91,10 @@ function TopBar({
       </Button>
     </div>
   );
+}
+
+export function EditPetForm() {
+  return <form></form>;
 }
 
 function OtherInfo({ selectedPet }: { selectedPet: Pet }) {
