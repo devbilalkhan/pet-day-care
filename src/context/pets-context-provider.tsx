@@ -18,12 +18,11 @@ export const PetsContext = createContext<PetsContextType | null>(null);
 
 export function PetsContextProvider({
   children,
-  data,
+  data: pets,
 }: {
   children: React.ReactNode;
   data: Pet[];
 }) {
-  const [pets, setPets] = useState<Pet[]>(data);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   //derived state
@@ -32,11 +31,9 @@ export function PetsContextProvider({
 
   //event handlers /actions
   // add a new pet
-  const handleAddPet = (newPet: Omit<Pet, "id">) => {
-    // let id = new Date().getTime().toString();
-    // const petWithId: Pet = { ...newPet, id };
-    // setPets((prev) => [...prev, petWithId]);
-    createPet()
+  const handleAddPet = async (newPet: Omit<Pet, "id">) => {
+    // invoking server action
+    await createPet(newPet);
   };
 
   // edit a pet details

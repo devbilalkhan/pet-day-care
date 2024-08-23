@@ -5,6 +5,7 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { usePetContext } from "../hooks/hooks";
 import { Button } from "./ui/button";
+import { createPet } from "@/actions/actions";
 
 type PetFormProps = {
   handleDialogClose: (value: boolean) => void;
@@ -13,30 +14,9 @@ type PetFormProps = {
 
 function PetForm({ handleDialogClose, action }: PetFormProps) {
   const { selectedPet: pet } = usePetContext();
-  const { handleAddPet, handleEditPet } = usePetContext();
-  console.log(open, "outer");
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    handleDialogClose(false);
-
-    const formData = new FormData(e.currentTarget);
-    const petFormDetails = {
-      name: formData.get("name") as string,
-      ownerName: formData.get("owner-name") as string,
-      age: +(formData.get("age") as string),
-      imageUrl:
-        (formData.get("image-url") as string) ||
-        "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
-      note: formData.get("note") as string,
-    };
-    action === "new"
-      ? handleAddPet(petFormDetails)
-      : handleEditPet(pet!.id, petFormDetails);
-  };
+ 
   return (
-    <form onSubmit={handleSubmit}>
+    <form action={createPet}>
       <div>
         <Label htmlFor="name">Name</Label>
         <Input
