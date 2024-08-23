@@ -6,19 +6,23 @@ import { Textarea } from "./ui/textarea";
 import { usePetContext } from "../hooks/hooks";
 import { Button } from "./ui/button";
 
-type NewPetFormProps = {
+type PetFormProps = {
   handleDialogClose: (value: boolean) => void;
+  action: "edit" | "new";
 };
 
-function NewPetForm({ handleDialogClose }: NewPetFormProps) {
-  const { handleAddPet } = usePetContext();
+function PetForm({ handleDialogClose, action }: PetFormProps) {
+  const { selectedPet: pet } = usePetContext();
+  const { handleAddPet, handleEditPet } = usePetContext();
+  console.log(open, "outer");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    handleDialogClose(false);
-    const formData = new FormData(e.currentTarget);
 
-    const newPet = {
+    handleDialogClose(false);
+
+    const formData = new FormData(e.currentTarget);
+    const petFormDetails = {
       name: formData.get("name") as string,
       ownerName: formData.get("owner-name") as string,
       age: +(formData.get("age") as string),
@@ -27,38 +31,65 @@ function NewPetForm({ handleDialogClose }: NewPetFormProps) {
         "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
       note: formData.get("note") as string,
     };
-    handleAddPet(newPet);
+    action === "new"
+      ? handleAddPet(petFormDetails)
+      : handleEditPet(pet!.id, petFormDetails);
   };
   return (
     <form onSubmit={handleSubmit}>
       <div>
         <Label htmlFor="name">Name</Label>
-        <Input id="name" name="name" type="text" />
+        <Input
+          id="name"
+          name="name"
+          type="text"
+          defaultValue={action === "edit" ? pet?.name : ""}
+        />
       </div>
       <div className="mt-3">
         <Label htmlFor="owner-name">Owner Name</Label>
-        <Input id="owner-name" name="owner-name" type="text" />
+        <Input
+          id="owner-name"
+          name="owner-name"
+          defaultValue={action === "edit" ? pet?.ownerName : ""}
+          type="text"
+        />
       </div>
 
       <div className="mt-3">
         <Label htmlFor="image-url">Image Url</Label>
-        <Input id="image-url" name="image-url" type="text" />
+        <Input
+          id="image-url"
+          name="image-url"
+          type="text"
+          defaultValue={action === "edit" ? pet?.imageUrl : ""}
+        />
       </div>
 
       <div className="mt-3">
         <Label htmlFor="pet-age">Age</Label>
-        <Input id="pet-age" name="age" type="number" />
+        <Input
+          id="pet-age"
+          name="age"
+          defaultValue={action === "edit" ? pet?.age : ""}
+          type="number"
+        />
       </div>
 
       <div className="mt-3 space-y-3">
         <Label htmlFor="note">Notes</Label>
-        <Textarea id="note" name="note" rows={3} />
+        <Textarea
+          id="note"
+          name="note"
+          rows={3}
+          defaultValue={action === "edit" ? pet?.note : ""}
+        />
       </div>
       <Button type="submit" className="mt-6 py-5 ">
-        Add Pet
+        {action === "new" ? "Add" : "Edit"} Pet
       </Button>
     </form>
   );
 }
 
-export default NewPetForm;
+export default PetForm;

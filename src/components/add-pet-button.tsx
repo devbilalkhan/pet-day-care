@@ -13,10 +13,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import NewPetForm from "./new-pet-form";
+import PetForm from "./pet-form";
 
 export function AddPetButton() {
   const [open, setOpen] = useState(false);
+
   const handleDialogClose = (value: boolean) => {
     setOpen(value);
   };
@@ -27,12 +28,12 @@ export function AddPetButton() {
           <PlusIcon className="h-6 w-6" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] md:max-w-[625px] px-10 py-10">
+      <DialogContent className="sm:max-w-[425px] md:max-w-[625px] p-10">
         <DialogHeader>
           <DialogTitle>Add a new pet</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
-        <NewPetForm  handleDialogClose={handleDialogClose} />
+        <PetForm action="new" handleDialogClose={handleDialogClose} />
       </DialogContent>
     </Dialog>
   );

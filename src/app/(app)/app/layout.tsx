@@ -2,6 +2,7 @@ import Backgound from "@/components/backgound";
 import Footer from "@/components/footer";
 import Header from "@/components/header";
 import { PetsContextProvider } from "@/context/pets-context-provider";
+import prisma from "@/lib/db";
 import { Pet } from "@/lib/types";
 import type { Metadata } from "next";
 type LayoutProps = {
@@ -19,21 +20,15 @@ export async function generateMetaData({
 }
 
 async function Layout({ children }: LayoutProps) {
-  const respose = await fetch(
-    "https://bytegrad.com/course-assets/projects/petsoft/api/pets"
-  );
 
-  if (!respose.ok) {
-    throw new Error("could not fetch pets");
-  }
-  const data: Pet[] = await respose.json();
+  const pets = await prisma.pet.findMany()
 
   return (
     <>
       <Backgound />
       <div className="flex flex-col max-w-[1200px] mx-auto px-10 min-h-screen">
         <Header />
-        <PetsContextProvider data={data}>{children}</PetsContextProvider>
+        <PetsContextProvider data={pets}>{children}</PetsContextProvider>
         <Footer />
       </div>
     </>

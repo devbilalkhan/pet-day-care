@@ -12,6 +12,8 @@ import {
   DialogFooter,
   DialogHeader,
 } from "@/components/ui/dialog";
+import PetForm from "./pet-form";
+import { useState } from "react";
 
 type PetListProps = {};
 
@@ -55,6 +57,12 @@ function TopBar({
   selectedPet: Pet;
   handleCheckout: (id: string) => void;
 }) {
+  const [open, isOpen] = useState(false);
+
+  const handleDialogClose = (value: boolean) => {
+    isOpen(value);
+  };
+
   return (
     <div className="flex items-center gap-x-3 bg-white px-12 py-5 border-b border-light">
       <Image
@@ -65,21 +73,17 @@ function TopBar({
         className="rounded-full w-[75px] h-[75px]"
       />
       <h2 className="text-3xl font-semibold ">{selectedPet?.name}</h2>
-      <Dialog>
+      <Dialog open={open} onOpenChange={isOpen}>
         <DialogTrigger asChild>
           <Button variant="secondary" className="ml-auto">
             Edit
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] md:max-w-[625px] p-10">
           <DialogHeader>
             <DialogTitle>Edit pet</DialogTitle>
-            <DialogDescription></DialogDescription>
           </DialogHeader>
-
-          <DialogFooter>
-            <Button type="submit">Save changes</Button>
-          </DialogFooter>
+          <PetForm action="edit" handleDialogClose={handleDialogClose} />
         </DialogContent>
       </Dialog>
       <Button

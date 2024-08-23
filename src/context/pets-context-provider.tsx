@@ -10,6 +10,7 @@ type PetsContextType = {
   selectedPet: Pet | undefined;
   totalPets: number;
   handleAddPet: (pet: Omit<Pet, "id">) => void;
+  handleEditPet: (id: string, pet: Omit<Pet, "id">) => void;
 };
 
 export const PetsContext = createContext<PetsContextType | null>(null);
@@ -35,6 +36,21 @@ export function PetsContextProvider({
     const petWithId: Pet = { ...newPet, id };
     setPets((prev) => [...prev, petWithId]);
   };
+
+  // edit a pet details
+  const handleEditPet = (id: string, newPetData: Omit<Pet, "id">) => {
+    setPets((prev) =>
+      prev.map((pet) => {
+        if (pet.id === id) {
+          return {
+            id,
+            ...newPetData,
+          };
+        }
+        return pet;
+      })
+    );
+  };
   // select a pet based on id for an active state
   const handleSelectedPetId = (id: string) => {
     setSelectedId(id);
@@ -56,6 +72,7 @@ export function PetsContextProvider({
         totalPets,
         handleCheckout,
         handleAddPet,
+        handleEditPet,
       }}
     >
       {children}
