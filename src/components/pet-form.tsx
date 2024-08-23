@@ -5,7 +5,7 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { usePetContext } from "../hooks/hooks";
 import { Button } from "./ui/button";
-import { createPet } from "@/actions/actions";
+import { createPet, updatePet } from "@/actions/actions";
 import { sleep } from "@/lib/utils";
 import { useFormState, useFormStatus } from "react-dom";
 import { toast } from "sonner";
@@ -22,10 +22,16 @@ function PetForm({ handleDialogClose, action }: PetFormProps) {
   return (
     <form
       action={async (formData) => {
-        const response = await createPet(formData);
-        response.success
-          ? toast.success(response.success)
-          : toast.error(response.error);
+        let response;
+        if (action === "new") {
+          response = await createPet(formData);
+        }
+        if (action === "edit") {
+          response = await updatePet(pet?.id, formData);
+        }
+        response?.success
+          ? toast.success(response?.success)
+          : toast.error(response?.error);
         handleDialogClose(false);
       }}
     >

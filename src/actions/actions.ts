@@ -15,7 +15,7 @@ export async function createPet(formData) {
         //age: +formData.get("age"),
         note: formData.get("note"),
         imageUrl:
-          formData.get("imageUrl") ||
+          formData.get("image-url") ||
           "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
       },
       
@@ -28,6 +28,35 @@ export async function createPet(formData) {
   } catch (error) {
     return {
       error: "Something went wrong! Could not create pet."
+    }
+  }
+}
+
+
+export async function updatePet(petId, formData) {
+  await sleep()
+  try {
+    await prisma.pet.update({
+      where : {
+        id: petId
+      },
+      data: {
+        name: formData.get("name"),
+        ownerName: formData.get("owner-name"),
+        age: +(formData.get("age")),
+        imageUrl: formData.get("image-url") ||
+          "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
+        note: formData.get("note"),
+      }
+    })
+
+    revalidatePath("/app", "layout");
+    return {
+      success: `${formData.get("name")} information is successfully updated.`
+    }
+  } catch (error) {
+    return {
+      error: "Could not update the pet information."
     }
   }
 }
