@@ -14,9 +14,14 @@ type PetFormProps = {
 
 function PetForm({ handleDialogClose, action }: PetFormProps) {
   const { selectedPet: pet } = usePetContext();
- 
+
   return (
-    <form action={createPet}>
+    <form
+      action={async (formData) => {
+        await createPet(formData);
+        handleDialogClose(false);
+      }}
+    >
       <div>
         <Label htmlFor="name">Name</Label>
         <Input
