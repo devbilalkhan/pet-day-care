@@ -9,6 +9,7 @@ type PetsContextType = {
   handleCheckout: (id: string) => void;
   selectedPet: Pet | undefined;
   totalPets: number;
+  handleAddPet: (pet: Omit<Pet, "id">) => void;
 };
 
 export const PetsContext = createContext<PetsContextType | null>(null);
@@ -29,8 +30,10 @@ export function PetsContextProvider({
 
   //event handlers /actions
   // add a new pet
-  const handleAddPet = (newPet: Pet) => {
-    setPets((prev) => [...prev, newPet]);
+  const handleAddPet = (newPet: Omit<Pet, "id">) => {
+    let id = new Date().getTime().toString();
+    const petWithId: Pet = { ...newPet, id };
+    setPets((prev) => [...prev, petWithId]);
   };
   // select a pet based on id for an active state
   const handleSelectedPetId = (id: string) => {
@@ -52,6 +55,7 @@ export function PetsContextProvider({
         selectedPet,
         totalPets,
         handleCheckout,
+        handleAddPet,
       }}
     >
       {children}

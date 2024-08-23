@@ -4,20 +4,7 @@ import PetList from "@/components/pet-list";
 import SearchForm from "@/components/search-form";
 import Stats from "@/components/Stats";
 import ContentBlock from "../../../../components/content-block";
-import { Button } from "@/components/ui/button";
-import { PlusIcon } from "@radix-ui/react-icons";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  DialogFooter,
-  DialogHeader,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import NewPetForm from "@/components/new-pet-form";
+import { AddPetButton } from "@/components/add-pet-button";
 
 function Page() {
   return (
@@ -49,26 +36,3 @@ function Page() {
 }
 
 export default Page;
-
-export function AddPetButton() {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button size="icon">
-          <PlusIcon className="h-6 w-6" />
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Add a new pet</DialogTitle>
-          <DialogDescription></DialogDescription>
-        </DialogHeader>
-        <NewPetForm />
-        <DialogFooter>
-          <Button type="submit">Save changes</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
-
