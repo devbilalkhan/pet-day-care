@@ -20,9 +20,7 @@ export async function generateMetaData({
 }
 
 async function Layout({ children }: LayoutProps) {
-
   const pets = await prisma.pet.findMany()
-
   return (
     <>
       <Backgound />

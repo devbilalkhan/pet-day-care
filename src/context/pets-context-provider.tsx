@@ -1,4 +1,5 @@
 "use client";
+import { createPet } from "@/actions/actions";
 import { Pet } from "@/lib/types";
 import { createContext, useMemo, useState } from "react";
 
@@ -32,9 +33,10 @@ export function PetsContextProvider({
   //event handlers /actions
   // add a new pet
   const handleAddPet = (newPet: Omit<Pet, "id">) => {
-    let id = new Date().getTime().toString();
-    const petWithId: Pet = { ...newPet, id };
-    setPets((prev) => [...prev, petWithId]);
+    // let id = new Date().getTime().toString();
+    // const petWithId: Pet = { ...newPet, id };
+    // setPets((prev) => [...prev, petWithId]);
+    createPet()
   };
 
   // edit a pet details
