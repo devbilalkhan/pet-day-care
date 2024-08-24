@@ -13,12 +13,14 @@ import {
   DialogHeader,
 } from "@/components/ui/dialog";
 import PetForm from "./pet-form";
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { deletePet } from "@/actions/actions";
+import { flushSync } from "react-dom";
 
 type PetListProps = {};
 
 function PetDetails(props: PetListProps) {
-  const { selectedPet, handleCheckout } = usePetContext();
+  const { selectedPet, handleSelectedPetId, handleCheckout } = usePetContext();
 
   if (!selectedPet) {
     return <EmptyView />;
@@ -26,7 +28,11 @@ function PetDetails(props: PetListProps) {
     return (
       <>
         <section className="flex flex-col h-full">
-          <TopBar selectedPet={selectedPet} handleCheckout={handleCheckout} />
+          <TopBar
+            selectedPet={selectedPet}
+            handleSelectedPetId={handleSelectedPetId}
+            handleCheckout={handleCheckout}
+          />
           <OtherInfo selectedPet={selectedPet} />
           <Notes selectedPet={selectedPet} />
         </section>
@@ -52,15 +58,20 @@ function EmptyView() {
 
 function TopBar({
   selectedPet,
+  handleSelectedPetId,
   handleCheckout,
 }: {
   selectedPet: Pet;
+  handleSelectedPetId: (id: string) => void;
   handleCheckout: (id: string) => void;
 }) {
   const [open, isOpen] = useState(false);
 
+  // const [isPending, startTransition] = useTransition();
   const handleDialogClose = (value: boolean) => {
-    isOpen(value);
+    flushSync(() => {
+      isOpen(value);
+    });
   };
 
   return (
@@ -87,10 +98,13 @@ function TopBar({
         </DialogContent>
       </Dialog>
       <Button
-        onClick={() => handleCheckout(selectedPet?.id)}
+        onClick={async () => {
+          // startTransition(async () => {
+          // });
+          await handleCheckout(selectedPet?.id);
+        }}
         variant="secondary"
       >
-        {" "}
         Checkout
       </Button>
     </div>

@@ -9,6 +9,7 @@ import { createPet, updatePet } from "@/actions/actions";
 import { sleep } from "@/lib/utils";
 import { useFormState, useFormStatus } from "react-dom";
 import { toast } from "sonner";
+import { Pet } from "@prisma/client";
 type ActionType = {
   action: "edit" | "new";
 };
@@ -17,22 +18,26 @@ type PetFormProps = ActionType & {
 };
 
 function PetForm({ handleDialogClose, action }: PetFormProps) {
-  const { selectedPet: pet } = usePetContext();
+  const { selectedPet: pet, handleAddPet, handleEditPet } = usePetContext();
 
   return (
     <form
       action={async (formData) => {
-        let response;
+        handleDialogClose(false);
+        const petData = {
+          name: formData.get("name")?.toString() || "",
+          ownerName: formData.get("owner-name")?.toString() || "",
+          imageUrl:
+            "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
+          age: parseInt(formData.get("age")?.toString() || "0", 10),
+          note: formData.get("note")?.toString() || "",
+        };
         if (action === "new") {
-          response = await createPet(formData);
+          await handleAddPet(petData);
         }
         if (action === "edit") {
-          response = await updatePet(pet?.id, formData);
+          await handleEditPet(pet!.id, petData);
         }
-        response?.success
-          ? toast.success(response?.success)
-          : toast.error(response?.error);
-        handleDialogClose(false);
       }}
     >
       <div>

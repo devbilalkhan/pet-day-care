@@ -14,14 +14,14 @@ function PetList() {
 
   const filteredPetList = useMemo(() => {
     if (debouncedText) {
-      return pets.filter((pet) =>
+      return pets.filter((pet: Pet) =>
         pet.name.toLowerCase().includes(debouncedText.toLowerCase())
       );
     }
-
     return pets;
   }, [debouncedText, pets]);
 
+  console.log(filteredPetList);
   return (
     <>
       <ul className="bg-white border-b border-light">

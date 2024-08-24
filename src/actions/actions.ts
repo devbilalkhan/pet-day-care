@@ -5,24 +5,16 @@ import { Pet } from "@/lib/types";
 import { sleep } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 
-export async function createPet(formData) {
+export async function createPet(petData: Omit<Pet, 'id'>) {
   await sleep();
   try {
     await prisma.pet.create({
-      data: {
-        name: formData.get("name"),
-        ownerName: formData.get("owner-name"),
-        //age: +formData.get("age"),
-        note: formData.get("note"),
-        imageUrl:
-          formData.get("image-url") ||
-          "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
-      },
+      data: petData,
       
     });
     revalidatePath("/app", "layout");
     return {
-      success: `${formData.get("name")} is successfully added.`
+      success: `${petData.name} is successfully added.`
     }
     
   } catch (error) {
@@ -33,30 +25,42 @@ export async function createPet(formData) {
 }
 
 
-export async function updatePet(petId, formData) {
+export async function updatePet(petId: string, petData: Omit<Pet, 'id'>) {
   await sleep()
   try {
     await prisma.pet.update({
       where : {
         id: petId
       },
-      data: {
-        name: formData.get("name"),
-        ownerName: formData.get("owner-name"),
-        age: +(formData.get("age")),
-        imageUrl: formData.get("image-url") ||
-          "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
-        note: formData.get("note"),
-      }
+      data: petData
     })
 
     revalidatePath("/app", "layout");
     return {
-      success: `${formData.get("name")} information is successfully updated.`
+      success: `${petData.name} information is successfully updated.`
     }
   } catch (error) {
     return {
       error: "Could not update the pet information."
+    }
+  }
+}
+
+export async function deletePet(petId: string){
+  await sleep() 
+  try {
+    await prisma.pet.delete({
+      where: {
+        id: petId
+      }
+    })
+    revalidatePath("/app", "layout");
+    return {
+      success: "Pet deleted successfully."
+    }
+  } catch (error) {
+    return {
+      error: "Something went wrong! deletion failed."
     }
   }
 }
