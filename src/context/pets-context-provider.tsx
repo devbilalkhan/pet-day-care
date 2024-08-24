@@ -1,7 +1,13 @@
 "use client";
 import { createPet, deletePet, updatePet } from "@/actions/actions";
 import { Pet } from "@/lib/types";
-import { createContext, useMemo, useOptimistic, useState } from "react";
+import {
+  createContext,
+  startTransition,
+  useMemo,
+  useOptimistic,
+  useState,
+} from "react";
 import { toast } from "sonner";
 
 type PetsContextType = {
@@ -26,18 +32,26 @@ export function PetsContextProvider({
 }) {
   const [optimisticPets, setOptimisticPets] = useOptimistic(
     data,
-    (state, newPetData) => {
-      return [
-        ...state,
-        {
-          ...newPetData,
-          id: new Date().getTime(),
-        },
-      ];
+    (state, { action, payload }) => {
+      switch (action) {
+        case "add":
+          return [...state, { ...payload, id: new Date().getTime() }];
+        case "edit":
+          return state.map((pet) => {
+            if (pet.id === payload.id) {
+              return { ...pet, ...payload.petData };
+            }
+            return pet;
+          });
+        case "delete":
+          return state.filter((pet) => pet.id !== payload.id);
+        default:
+          return state;
+      }
     }
   );
   const [selectedId, setSelectedId] = useState<string | null>(null);
-
+  console.log(optimisticPets);
   //derived state
   const selectedPet = optimisticPets.find((p) => p.id === selectedId);
   const totalPets = optimisticPets.length;
@@ -49,7 +63,7 @@ export function PetsContextProvider({
 
   // add new pet
   const handleAddPet = async (petData: Omit<Pet, "id">) => {
-    setOptimisticPets(petData);
+    setOptimisticPets({ action: "add", payload: petData });
     const response = await createPet(petData);
     response.success
       ? toast.success(response.success)
@@ -57,6 +71,7 @@ export function PetsContextProvider({
   };
 
   const handleEditPet = async (id: string, petData: Omit<Pet, "id">) => {
+    setOptimisticPets({ action: "edit", payload: { id, petData } });
     const response = await updatePet(id, petData);
     response.success
       ? toast.success(response.success)
@@ -64,6 +79,9 @@ export function PetsContextProvider({
   };
 
   const handleCheckout = async (id: string) => {
+    startTransition(() => {
+      setOptimisticPets({ action: "delete", payload: id });
+    });
     await deletePet(id);
     handleSelectedPetId(null);
   };

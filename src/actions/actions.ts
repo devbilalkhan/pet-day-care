@@ -6,7 +6,7 @@ import { sleep } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 
 export async function createPet(petData: Omit<Pet, 'id'>) {
-  await sleep();
+  await sleep(1000);
   try {
     await prisma.pet.create({
       data: petData,
@@ -26,7 +26,7 @@ export async function createPet(petData: Omit<Pet, 'id'>) {
 
 
 export async function updatePet(petId: string, petData: Omit<Pet, 'id'>) {
-  await sleep()
+  await sleep(1000)
   try {
     await prisma.pet.update({
       where : {
@@ -47,7 +47,7 @@ export async function updatePet(petId: string, petData: Omit<Pet, 'id'>) {
 }
 
 export async function deletePet(petId: string){
-  await sleep() 
+  await sleep(1000) 
   try {
     await prisma.pet.delete({
       where: {
