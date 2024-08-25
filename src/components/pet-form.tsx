@@ -6,6 +6,8 @@ import { Textarea } from "./ui/textarea";
 import { usePetContext } from "../hooks/hooks";
 import { Button } from "./ui/button";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type ActionType = {
   action: "edit" | "new";
@@ -22,12 +24,34 @@ type PetFormFields = {
   note: string;
 };
 
+const petFormSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(3, { message: "Name should be min of 3 and max of 30 charactes" })
+    .max(30, { message: "Name should be min of 3 and max of 30 charactes" }),
+
+  "owner-name": z
+    .string()
+    .trim()
+    .min(3, { message: "Name should be min of 3 and max of 30 charactes" })
+    .max(30, { message: "Name should be min of 3 and max of 30 charactes" }),
+  "image-url": z.union([
+    z.literal(""),
+    z.string().trim().url({ message: "Must be a valid url." }),
+  ]),
+  age: z.coerce.number().int().positive().max(999),
+  note: z.union([z.literal(""), z.string().trim().max(1000)]),
+});
+
 function PetForm({ handleDialogClose, action }: PetFormProps) {
   const { selectedPet: pet, handleAddPet, handleEditPet } = usePetContext();
   const {
     register,
     formState: { errors, isSubmitting, trigger },
-  } = useForm<PetFormFields>();
+  } = useForm<PetFormFields>({
+    resolver: zodResolver(petFormSchema)
+  });
   return (
     <form
       action={async (formData) => {
