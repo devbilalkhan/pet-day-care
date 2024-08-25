@@ -8,6 +8,9 @@ import { Button } from "./ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { DEFAULT_PET_IMAGE } from "@/lib/constants";
+import { PetFormFields, petFormSchema } from "@/lib/validations";
+
 
 type ActionType = {
   action: "edit" | "new";
@@ -16,56 +19,27 @@ type PetFormProps = ActionType & {
   handleDialogClose: (value: boolean) => void;
 };
 
-type PetFormFields = {
-  name: string;
-  "owner-name": string;
-  "image-url": string;
-  age: number;
-  note: string;
-};
-
-const petFormSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(3, { message: "Name should be min of 3 and max of 30 charactes" })
-    .max(30, { message: "Name should be min of 3 and max of 30 charactes" }),
-
-  "owner-name": z
-    .string()
-    .trim()
-    .min(3, { message: "Name should be min of 3 and max of 30 charactes" })
-    .max(30, { message: "Name should be min of 3 and max of 30 charactes" }),
-  "image-url": z.union([
-    z.literal(""),
-    z.string().trim().url({ message: "Must be a valid url." }),
-  ]),
-  age: z.coerce.number().int().positive().max(999),
-  note: z.union([z.literal(""), z.string().trim().max(1000)]),
-});
-
 function PetForm({ handleDialogClose, action }: PetFormProps) {
   const { selectedPet: pet, handleAddPet, handleEditPet } = usePetContext();
   const {
     register,
-    formState: { errors, isSubmitting, trigger },
+    trigger,
+    getValues,
+    formState: { errors, isSubmitting },
   } = useForm<PetFormFields>({
-    resolver: zodResolver(petFormSchema)
+    resolver: zodResolver(petFormSchema),
   });
   return (
     <form
-      action={async (formData) => {
+      action={async () => {
         const result = await trigger();
         if (!result) return;
         handleDialogClose(false);
-        const petData = {
-          name: formData.get("name")?.toString() || "",
-          ownerName: formData.get("owner-name")?.toString() || "",
-          imageUrl:
-            "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
-          age: parseInt(formData.get("age")?.toString() || "0", 10),
-          note: formData.get("note")?.toString() || "",
-        };
+
+        const petData = getValues();
+        petData.imageUrl = petData.imageUrl || DEFAULT_PET_IMAGE
+        
+        // this is server action whereas above lines are client side
         if (action === "new") {
           await handleAddPet(petData);
         }
@@ -80,18 +54,18 @@ function PetForm({ handleDialogClose, action }: PetFormProps) {
         {errors.name && <p className="text-red-500">{errors.name.message}</p>}
       </div>
       <div className="mt-3">
-        <Label htmlFor="owner-name">Owner Name</Label>
-        <Input id="owner-name" {...register("owner-name")} />
-        {errors["owner-name"] && (
-          <p className="text-red-500">{errors["owner-name"].message}</p>
+        <Label htmlFor="ownerName">Owner Name</Label>
+        <Input id="ownerName" {...register("ownerName")} />
+        {errors.ownerName && (
+          <p className="text-red-500">{errors.ownerName.message}</p>
         )}
       </div>
 
       <div className="mt-3">
-        <Label htmlFor="image-url">Image Url</Label>
-        <Input id="image-url" {...register("image-url")} />
-        {errors["image-url"] && (
-          <p className="text-red-500">{errors["image-url"].message}</p>
+        <Label htmlFor="imageUrl">Image Url</Label>
+        <Input id="imageUrl" {...register("imageUrl")} />
+        {errors.imageUrl && (
+          <p className="text-red-500">{errors.imageUrl.message}</p>
         )}
       </div>
 
