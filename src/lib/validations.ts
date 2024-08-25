@@ -26,3 +26,5 @@ export const petFormSchema = z.object({
       data.imageUrl || DEFAULT_PET_IMAGE  
   }));
 export type PetFormFields = z.infer<typeof petFormSchema>;
+
+export const petIdSchema = z.string().cuid()

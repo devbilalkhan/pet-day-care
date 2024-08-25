@@ -3,10 +3,10 @@
 import prisma from "@/lib/db";
 import {  PetEssentials } from "@/lib/types";
 import { sleep } from "@/lib/utils";
-import { petFormSchema } from "@/lib/validations";
+import { petFormSchema, petIdSchema } from "@/lib/validations";
 import { revalidatePath } from "next/cache";
 
-export async function createPet(petData: PetEssentials) {
+export async function createPet(petData: unknown) {
   await sleep(1000);
   const validatedPet = petFormSchema.safeParse(petData)
   if(! validatedPet.success) {
@@ -23,7 +23,7 @@ export async function createPet(petData: PetEssentials) {
     });
     revalidatePath("/app", "layout");
     return {
-      success: `${petData.name} is successfully added.`
+      success: `${validatedPet.data.name} is successfully added.`
     }
     
   } catch (error) {
@@ -34,19 +34,26 @@ export async function createPet(petData: PetEssentials) {
 }
 
 
-export async function updatePet(petId: string, petData: PetEssentials) {
+export async function updatePet(petId: unknown, petData: unknown) {
   await sleep(1000)
+  const validatedPet = petFormSchema.safeParse(petData)
+  const validatedId = petIdSchema.safeParse(petId)
+  if (!validatedPet.success || !validatedId.success) {
+    return {
+      message: 'Invalid pet data',
+    }
+  }
   try {
     await prisma.pet.update({
       where : {
-        id: petId
+        id: validatedId.data
       },
-      data: petData
+      data: validatedPet.data
     })
 
     revalidatePath("/app", "layout");
     return {
-      success: `${petData.name} information is successfully updated.`
+      success: `${validatedPet.data.name} information is successfully updated.`
     }
   } catch (error) {
     return {
@@ -55,12 +62,18 @@ export async function updatePet(petId: string, petData: PetEssentials) {
   }
 }
 
-export async function deletePet(petId: string){
+export async function deletePet(petId: unknown){
   await sleep(1000) 
+  const validatedId = petIdSchema.safeParse(petId)
+  if(!validatedId.success){
+    return {
+      message: 'Invalid pet data',
+    }
+  }
   try {
     await prisma.pet.delete({
       where: {
-        id: petId
+        id: validatedId.data
       }
     })
     revalidatePath("/app", "layout");

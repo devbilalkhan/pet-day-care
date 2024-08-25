@@ -39,7 +39,7 @@ export function PetsContextProvider({
             return pet;
           });
         case "delete":
-          return state.filter((pet) => pet.id !== payload.id);
+          return state.filter((pet) => pet.id !== payload);
         default:
           return state;
       }

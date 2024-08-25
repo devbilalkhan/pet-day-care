@@ -11,7 +11,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { DEFAULT_PET_IMAGE } from "@/lib/constants";
 import { PetFormFields, petFormSchema } from "@/lib/validations";
 
-
 type ActionType = {
   action: "edit" | "new";
 };
@@ -28,6 +27,13 @@ function PetForm({ handleDialogClose, action }: PetFormProps) {
     formState: { errors, isSubmitting },
   } = useForm<PetFormFields>({
     resolver: zodResolver(petFormSchema),
+    defaultValues: {
+      name: pet?.name,
+      ownerName: pet?.ownerName,
+      imageUrl: pet?.imageUrl,
+      age: pet?.age,
+      note: pet?.note,
+    },
   });
   return (
     <form
@@ -37,8 +43,8 @@ function PetForm({ handleDialogClose, action }: PetFormProps) {
         handleDialogClose(false);
 
         const petData = getValues();
-        petData.imageUrl = petData.imageUrl || DEFAULT_PET_IMAGE
-        
+        petData.imageUrl = petData.imageUrl || DEFAULT_PET_IMAGE;
+
         // this is server action whereas above lines are client side
         if (action === "new") {
           await handleAddPet(petData);
