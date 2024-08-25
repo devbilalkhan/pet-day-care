@@ -1,7 +1,7 @@
 "use client";
 
 import { useDebounce, usePetContext } from "@/hooks/hooks";
-import { Pet } from "@/lib/types";
+import { Pet } from "@prisma/client";
 import { cn } from "@/lib/utils";
 import { useSearchStore } from "@/store/store";
 import Image from "next/image";
@@ -21,7 +21,6 @@ function PetList() {
     return pets;
   }, [debouncedText, pets]);
 
-  console.log(filteredPetList);
   return (
     <>
       <ul className="bg-white border-b border-light">

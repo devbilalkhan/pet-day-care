@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { usePetContext } from "../hooks/hooks";
-import { Pet } from "@/lib/types";
+import { Pet } from "@prisma/client";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -13,13 +13,11 @@ import {
   DialogHeader,
 } from "@/components/ui/dialog";
 import PetForm from "./pet-form";
-import { useState, useTransition } from "react";
-import { deletePet } from "@/actions/actions";
+import { useState } from "react";
+
 import { flushSync } from "react-dom";
 
-type PetListProps = {};
-
-function PetDetails(props: PetListProps) {
+function PetDetails() {
   const { selectedPet, handleSelectedPetId, handleCheckout } = usePetContext();
 
   if (!selectedPet) {
@@ -58,12 +56,11 @@ function EmptyView() {
 
 function TopBar({
   selectedPet,
-  handleSelectedPetId,
   handleCheckout,
 }: {
   selectedPet: Pet;
-  handleSelectedPetId: (id: string) => void;
-  handleCheckout: (id: string) => void;
+  handleSelectedPetId: (id: Pet["id"]) => void;
+  handleCheckout: (id: Pet["id"]) => void;
 }) {
   const [open, isOpen] = useState(false);
 
@@ -83,7 +80,7 @@ function TopBar({
         alt="pet"
         className="rounded-full w-[75px] h-[75px]"
       />
-      <h2 className="text-3xl font-semibold ">{selectedPet?.name}</h2>
+      <h2 className="text-3xl font-semibold ">{selectedPet.name}</h2>
       <Dialog open={open} onOpenChange={isOpen}>
         <DialogTrigger asChild>
           <Button variant="secondary" className="ml-auto">
@@ -101,7 +98,7 @@ function TopBar({
         onClick={async () => {
           // startTransition(async () => {
           // });
-          await handleCheckout(selectedPet?.id);
+          await handleCheckout(selectedPet.id);
         }}
         variant="secondary"
       >
@@ -122,13 +119,13 @@ function OtherInfo({ selectedPet }: { selectedPet: Pet }) {
         <h3 className="text-[13px]  text-lg font-medium uppercase text-zinc-700">
           Owner Name
         </h3>
-        <p className="mt-1 text-lg text-zinc-800">{selectedPet?.ownerName}</p>
+        <p className="mt-1 text-lg text-zinc-800">{selectedPet.ownerName}</p>
       </div>
       <div>
         <h3 className="text-[13px] text-lg font-medium uppercase text-zinc-700">
           Age
         </h3>
-        <p className="mt-1 text-lg text-zinc-800">{selectedPet?.age}</p>
+        <p className="mt-1 text-lg text-zinc-800">{selectedPet.age}</p>
       </div>
     </div>
   );
@@ -137,7 +134,7 @@ function OtherInfo({ selectedPet }: { selectedPet: Pet }) {
 function Notes({ selectedPet }: { selectedPet: Pet }) {
   return (
     <section className="bg-white text-black px-7 py-5 rounded-md mb-9 mx-8 flex-1 border border-light">
-      {selectedPet?.note}
+      {selectedPet.note}
     </section>
   );
 }

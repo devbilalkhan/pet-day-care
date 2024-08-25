@@ -5,11 +5,8 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 import { usePetContext } from "../hooks/hooks";
 import { Button } from "./ui/button";
-import { createPet, updatePet } from "@/actions/actions";
-import { sleep } from "@/lib/utils";
-import { useFormState, useFormStatus } from "react-dom";
-import { toast } from "sonner";
-import { Pet } from "@prisma/client";
+import { useForm } from "react-hook-form";
+
 type ActionType = {
   action: "edit" | "new";
 };
@@ -17,12 +14,25 @@ type PetFormProps = ActionType & {
   handleDialogClose: (value: boolean) => void;
 };
 
+type PetFormFields = {
+  name: string;
+  "owner-name": string;
+  "image-url": string;
+  age: number;
+  note: string;
+};
+
 function PetForm({ handleDialogClose, action }: PetFormProps) {
   const { selectedPet: pet, handleAddPet, handleEditPet } = usePetContext();
-
+  const {
+    register,
+    formState: { errors, isSubmitting, trigger },
+  } = useForm<PetFormFields>();
   return (
     <form
       action={async (formData) => {
+        const result = await trigger();
+        if (!result) return;
         handleDialogClose(false);
         const petData = {
           name: formData.get("name")?.toString() || "",
@@ -42,51 +52,35 @@ function PetForm({ handleDialogClose, action }: PetFormProps) {
     >
       <div>
         <Label htmlFor="name">Name</Label>
-        <Input
-          id="name"
-          name="name"
-          type="text"
-          defaultValue={action === "edit" ? pet?.name : ""}
-        />
+        <Input id="name" {...register("name")} />
+        {errors.name && <p className="text-red-500">{errors.name.message}</p>}
       </div>
       <div className="mt-3">
         <Label htmlFor="owner-name">Owner Name</Label>
-        <Input
-          id="owner-name"
-          name="owner-name"
-          defaultValue={action === "edit" ? pet?.ownerName : ""}
-          type="text"
-        />
+        <Input id="owner-name" {...register("owner-name")} />
+        {errors["owner-name"] && (
+          <p className="text-red-500">{errors["owner-name"].message}</p>
+        )}
       </div>
 
       <div className="mt-3">
         <Label htmlFor="image-url">Image Url</Label>
-        <Input
-          id="image-url"
-          name="image-url"
-          type="text"
-          defaultValue={action === "edit" ? pet?.imageUrl : ""}
-        />
+        <Input id="image-url" {...register("image-url")} />
+        {errors["image-url"] && (
+          <p className="text-red-500">{errors["image-url"].message}</p>
+        )}
       </div>
 
       <div className="mt-3">
         <Label htmlFor="pet-age">Age</Label>
-        <Input
-          id="pet-age"
-          name="age"
-          defaultValue={action === "edit" ? pet?.age : ""}
-          type="number"
-        />
+        <Input id="pet-age" {...register("age")} />
+        {errors.age && <p className="text-red-500">{errors.age.message}</p>}
       </div>
 
       <div className="mt-3 space-y-3">
         <Label htmlFor="note">Notes</Label>
-        <Textarea
-          id="note"
-          name="note"
-          rows={3}
-          defaultValue={action === "edit" ? pet?.note : ""}
-        />
+        <Textarea id="note" {...register("note")} />
+        {errors.note && <p className="text-red-500">{errors.note.message}</p>}
       </div>
       <PetFormButton action={action} />
     </form>
@@ -96,10 +90,9 @@ function PetForm({ handleDialogClose, action }: PetFormProps) {
 export default PetForm;
 
 function PetFormButton({ action }: ActionType) {
-  const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending} className="mt-6 py-5 ">
-      {pending ? "Loading..." : action === "new" ? "Add Pet" : "Edit Pet"}
+    <Button type="submit" className="mt-6 py-5 ">
+      {action === "new" ? "Add Pet" : "Edit Pet"}
     </Button>
   );
 }
