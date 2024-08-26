@@ -14,7 +14,6 @@ export async function createPet(petData: unknown) {
       message: "Invalid pet data"
     }
   }
-  console.log(typeof(validatedPet.data.age))
 
   try {
     await prisma.pet.create({

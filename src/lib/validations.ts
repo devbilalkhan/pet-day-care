@@ -18,7 +18,7 @@ export const petFormSchema = z.object({
       z.string().trim().url({ message: "Must be a valid url." }),
     ]),
     age: z.coerce.number().int().positive().max(999),
-    note: z.union([z.literal(""), z.string().trim().max(10)]),
+    note: z.union([z.literal(""), z.string().trim().max(100)]),
   })
   .transform((data) => ({
     ...data,
