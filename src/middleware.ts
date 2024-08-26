@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
 
 
-export function middleware(request: Request){
-  console.log(request.url)
-  return NextResponse.next()
-}
+// export function middleware(request: Request){
+
+//   return NextResponse.next()
+// }
+
+export { auth as middleware } from "@/lib/auth"
 
 
 export const config = {

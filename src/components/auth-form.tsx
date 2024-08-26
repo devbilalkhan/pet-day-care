@@ -3,10 +3,10 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
 type AuthFormProps = {
-  // Define your props here
+  authMode: "signup" | "login";
 };
 
-function AuthForm({}: AuthFormProps) {
+function AuthForm({ authMode }: AuthFormProps) {
   return (
     <form className="mt-6">
       <div className="w-[400px]">
@@ -22,7 +22,7 @@ function AuthForm({}: AuthFormProps) {
         <Input id="loginPassword" type="password" />
       </div>
       <div className="flex justify-end mt-4">
-        <Button>Login</Button>
+        <Button>{authMode === "login" ? "Login" : "Signup"}</Button>
       </div>
     </form>
   );

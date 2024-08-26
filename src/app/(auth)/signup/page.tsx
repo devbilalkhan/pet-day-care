@@ -9,7 +9,7 @@ function Page(props: PageProps) {
     <>
       <main>
         <H1 className="text-center">Sign up</H1>
-        <AuthForm />
+        <AuthForm authMode="signup" />
         <p className="text-zinc-500 ">
           Already have an account?{" "}
           <Link className="text-sm underline hover:text-zinc-700" href="/login">
